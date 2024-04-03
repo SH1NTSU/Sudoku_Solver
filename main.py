@@ -1,5 +1,12 @@
 import random
 
+all_houses = [[(i, j) for j in range(9)] for i in range(9)] + \
+                [[(j, i) for j in range(9)] for i in range(9)] + \
+                [[(i + j, i) for i in range(9)] for j in range(9)] + \
+                [[(i, i + j) for i in range(9)] for j in range(9)] + \
+                [[(i + j, i - j) for i in range(9)] for j in range(9)] + \
+                [[(i, 8 - i + j) for i in range(9)] for j in range(9)]
+
 def is_valid_move(board, row, col, num):
     for i in range(9):
         if board[row][i] == num:
@@ -115,5 +122,6 @@ if solve_sudoku(random_sudoku_board):
     print_board(random_sudoku_board)
 else:
     print("\nNo solution exists.")
+
 
 
