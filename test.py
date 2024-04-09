@@ -124,28 +124,75 @@ class Sudoku:
                                 elements.append(self.puzzle[row][col])
         return elements
 
-    def solve(self):
-        for iterations in range(0, 3):
-            zones = self.extract_zones()
+    def hidden_single(self):
+        def find_only_number_in_group(group, number):
+            count = 0
+            removed = 0
+            cell_to_clean = (-1, -1)
+            for cell_row, cell_col in group:
+                if self.puzzle[cell_row][cell_col] == 0:
+                    row_elements = self.get_zone_elements("row", cell_row, cell_col)
+                    col_elements = self.get_zone_elements("col", cell_row, cell_col)
+                    square_elements = self.get_zone_elements("square", cell_row, cell_col)
+                    numbers = [num for num in range(1, 10)]
+                    possibilities = [i for i in range(1, 10)]
+                    for possibility in numbers:
+                        if (possibility in row_elements) or (possibility in col_elements) or (possibility in square_elements):
+                            possibilities.remove(possibility)
+                    if number in possibilities:
+                        count += 1
+                        cell_to_clean = (cell_row, cell_col)
+            if count == 1 and cell_to_clean != (-1, -1):
+                row, col = cell_to_clean
+                self.puzzle[row][col] = number
+                removed = 1
+            return removed
+
+        count = 0
+        zones = self.extract_zones()
+        for number in range(1, 10):
             for zone in zones:
                 if zone["type"] == "row":
-                    row = zone["position"]
-                    for col in range(0, 9):
-                        self.insert_possibilities(row, col)
+                    for col in range(9):
+                        count += find_only_number_in_group([(zone["position"], col) for col in range(9)], number)
                 elif zone["type"] == "col":
-                    col = zone["position"]
-                    for row in range(0, 9):
-                        self.insert_possibilities(row, col)
+                    for row in range(9):
+                        count += find_only_number_in_group([(row, zone["position"]) for row in range(9)], number)
                 else:
-                    row_start = zone["position"][0]
-                    row_end = zone["position"][1]
-                    col_start = zone["position"][2]
-                    col_end = zone["position"][3]
-                    for row in range(row_start, row_end + 1):
-                        for col in range(col_start, col_end + 1):
-                            self.insert_possibilities(row, col)
-        return self.puzzle
+                    row_start, row_end, col_start, col_end = zone["position"]
+                    group = [(row, col) for row in range(row_start, row_end + 1) for col in range(col_start, col_end + 1)]
+                    count += find_only_number_in_group(group, number)
+        return count
     
+    def solve(self):
+    # Attempt to solve using the hidden_single method
+        count_removed = self.hidden_single()
+        
+        # If no changes were made, resort to the existing solve method
+        if count_removed == 0:
+            for iterations in range(0, 3):
+                zones = self.extract_zones()
+                for zone in zones:
+                    if zone["type"] == "row":
+                        row = zone["position"]
+                        for col in range(0, 9):
+                            self.insert_possibilities(row, col)
+                    elif zone["type"] == "col":
+                        col = zone["position"]
+                        for row in range(0, 9):
+                            self.insert_possibilities(row, col)
+                    else:
+                        row_start, row_end, col_start, col_end = zone["position"]
+                        for row in range(row_start, row_end + 1):
+                            for col in range(col_start, col_end + 1):
+                                self.insert_possibilities(row, col)
+        
+        # Further solving by simple elimination
+        for row in range(9):
+            for col in range(9):
+                self.insert_possibilities(row, col)
+        
+        return self.puzzle
     def print_board(self):
         """Ta funkcjia tworzy planszę sudoku"""
         print("-\t" * 13)
@@ -162,17 +209,11 @@ class Sudoku:
         print("-\t" * 13)
 
 if __name__ == "__main__":
-    puzzle = [
-        [8, 7, 6, 9, 0, 0, 0, 0, 0],
-        [0, 1, 0, 0, 0, 6, 0, 0, 0],
-        [0, 4, 0, 3, 0, 5, 8, 0, 0],
-        [4, 0, 0, 0, 0, 0, 2, 1, 0],
-        [0, 9, 0, 5, 0, 0, 0, 0, 0],
-        [0, 5, 0, 0, 4, 0, 3, 0, 6],
-        [0, 2, 9, 0, 0, 0, 0, 0, 8],
-        [0, 0, 4, 6, 9, 0, 1, 7, 3],
-        [0, 0, 0, 0, 0, 1, 0, 0, 4]
-    ]
+    puzzle = [[8, 0, 0, 0, 0, 0, 0, 0, 0], [0, 0, 3, 6, 0, 0, 0, 0, 0],
+            [0, 7, 0, 0, 9, 0, 2, 0, 0], [0, 5, 0, 0, 0, 7, 0, 0, 0],
+            [0, 0, 0, 0, 4, 5, 7, 0, 0], [0, 0, 0, 1, 0, 0, 0, 3, 0],
+            [0, 0, 1, 0, 0, 0, 0, 6, 8], [0, 0, 8, 5, 0, 0, 0, 1, 0],
+            [0, 9, 0, 0, 0, 0, 4, 0, 0]]
     solver = Sudoku(puzzle)
     print("Original Puzzle:")
     solver.print_board()
