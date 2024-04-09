@@ -83,18 +83,23 @@ class Sudoku:
                     continue
             if not inserted:
                 zones.append(zone)
+    def insert_possibilities(self,puzzle, row, col):
+        """ta funkcja po kolej eliminuje możliwość 
+        i jak zostanie już tylko jedno to je dodaje  """
+        if puzzle[row][col] == 0:
+            row_elements = self.get_zone_elements("row", row, col, puzzle)
+            col_elements = self.get_zone_elements("col", row, col, puzzle)
+            square_elements = self.get_zone_elements("square", row, col, puzzle)
+            numbers = [number for number in range(1, 10)]
+            possibilities = [i for i in range(1, 10)]
+            for  possibility in numbers:
+                if (possibilities in row_elements) or (possibility in col_elements) or (possibility in square_elements):
+                    possibilities.remove(possibility)
+            if len(possibilities) == 1:
+                puzzle[row][col] = possibilities[0]
+
                 
-
-        
-
-    
-    
-    
-    
-    
-    
-    
-    
+                
     
     def solve(self):
         pass
