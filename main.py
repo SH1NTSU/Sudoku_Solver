@@ -27,7 +27,7 @@ class Sudoku:
             zone["position"] = col
             self.insert_sorted(zone, zones)
         # kwadraty
-        for square in self.generate_square_positions():
+        for square in self.generate_square_position():
             nr_elements
             for row in range(square["row_start"], square["row_end"]+1):
                 for col in range(square["col_start"], square["col_end"]+1):
@@ -41,7 +41,7 @@ class Sudoku:
 
         return zones
     
-    def generate_square_positions(self):
+    def generate_square_position(self):
         """Ta funkcja służy budowie krotki słowników z pozycjami kwadratów"""
         square_positions = []
         row_start = 0
@@ -97,6 +97,32 @@ class Sudoku:
                     possibilities.remove(possibility)
             if len(possibilities) == 1:
                 puzzle[row][col] = possibilities[0]
+    def get_zone_elements(self, zone_type, position1, position2, board):
+        """ta funkcja bierze wrzystkkie nie 
+        zerowe elementy z danej strefy(lini, kolumny albo kwadratu)
+        """
+        elements = []
+        if zone_type == "col":
+            for row in range(0, 9):
+                if board[row][position2] != 0:
+                    elements.append(board[row][position2])
+        elif zone_type == "row":
+            for col in range(0, 9):
+                if board[position1][col] != 0:
+                    elements.append(board[position1][col])
+        else:
+            square_position = self.generate_square_position()
+            for square in square_position:
+                if (square["row_start"] <= position1 <= square["row_end"] 
+                    and square["col_start"] <= position2 <= square["col_end"]):
+                    for row in range(square["row_start"], square["row_end"]+1):
+                        for col in range(square["col_start"], square["col_end"]+1):
+                            if board[row][col] != 0:
+                                elements.append(board[row][col])
+                            break
+
+        return elements
+
 
                 
                 
