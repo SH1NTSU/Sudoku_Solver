@@ -1,7 +1,7 @@
 class BruteForceSolver:
     def __init__(self, puzzle):
         self.puzzle = puzzle
-        self.found_number = False  # Flag to indicate if a valid number has been found
+        self.found_number = False 
 
     def solve(self):
         empty_cell = self.find_empty_cell(self.puzzle)
@@ -14,8 +14,8 @@ class BruteForceSolver:
         for num in range(1, 10):
             if self.is_valid_move(self.puzzle, row, col, num):
                 self.puzzle[row][col] = num
-                self.found_number = True  # Set flag to True indicating a number has been found
-                return True  # Return True indicating success
+                self.found_number = True  
+                return True  
 
         return False  # No valid number found
 
