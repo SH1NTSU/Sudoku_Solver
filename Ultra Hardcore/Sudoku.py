@@ -43,7 +43,7 @@ class Sudoku:
         print("-\t" * 13)
 
 if __name__ == "__main__":
-    puzzle = [
+    puzzle =     [
         [0, 0, 0, 0, 0, 0, 0, 0, 0],
         [0, 0, 0, 0, 0, 3, 0, 8, 5],
         [0, 0, 1, 0, 2, 0, 0, 0, 0],
@@ -61,3 +61,4 @@ if __name__ == "__main__":
     print("=" * 31)
     print("Solved Puzzle:")
     sudoku.print_board()
+
