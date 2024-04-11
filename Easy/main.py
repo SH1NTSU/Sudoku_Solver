@@ -67,9 +67,8 @@ class Sudoku:
     
     def insert_sorted(self, zone, zones):
         """Ta funkcja bierze słownik określający 
-    daną strefe i wrzuca ją do listy straf po długość pola. 
-    Robie to po to żeby było posortowane i 
-    żeby zaczynało od tych stref z większą ilośćą pól. 
+    daną strefe i wrzuca ją do listy stref po długość danej strefy. 
+    Zaczyna od najmniejszej do największej.
     To usprawni kod w prędkość rozwiązywania """
         if len(zones) == 0:
             zones.append(zone)
@@ -132,6 +131,7 @@ class Sudoku:
                     row = zone["position"]
                     for col in range(0, 9):
                         self.insert_possibilities(row, col)
+                        
                 elif zone["type"] == "col":
                     col = zone["position"]
                     for row in range(0, 9):
